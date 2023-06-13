@@ -1,6 +1,15 @@
 # Intersection Camera
 The goal of this project is to combine the 3D point clouds of 4 different realsense depth cameras into a single calibrated view. 
 
+# Prerequisites
+- ros (tested with melodic)
+- librealsense2 (https://github.com/IntelRealSense/librealsense/blob/master/doc/distribution_linux.md)
+- opencv for python (sudo apt-get install python3-opencv)
+- pip
+    - numpy
+    - pickle
+    - tqdm
+
 # Instructions
 1. Run `python3 corners.py` on current node. Enter the amount of ids you want to detect, this can range from 9 to 25. Try multiple `/dev/video` sources until it works. You may need to run as sudo. 
 2. If on main node skip this step. Otherwise run `python3 server.py` on the main node and `python3 client.py` on the current node, sending the appropriate ids pickle file.
