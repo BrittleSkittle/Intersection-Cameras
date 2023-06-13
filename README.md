@@ -4,6 +4,7 @@ The goal of this project is to combine the 3D point clouds of 4 different realse
 # Prerequisites
 - ros (tested with melodic)
 - librealsense2 (https://github.com/IntelRealSense/librealsense/blob/master/doc/distribution_linux.md)
+- realsense_ros (https://github.com/IntelRealSense/realsense-ros/tree/ros1-legacy)
 - opencv for python (sudo apt-get install python3-opencv)
 - pip
     - numpy
