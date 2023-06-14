@@ -1,5 +1,5 @@
 # Intersection Camera
-The goal of this project is to combine the 3D point clouds of 4 different realsense depth cameras into a single calibrated view. 
+The goal of this project is to combine the 3D point clouds of 4 different realsense depth cameras into a single calibrated view. Currently pointcloud display only works with 2 cameras. 
 
 # Prerequisites
 - ros (tested with melodic)
@@ -30,3 +30,5 @@ The goal of this project is to combine the 3D point clouds of 4 different realse
 `roslaunch realsense2_camera rs_camera.launch camera:=cam_4 serial_no:=821312060260 filters:=pointcloud`
 
 9. run `rosrun tf2_ros static_transform_publisher 0.75464242 -1.047124 1.22725315 53.92585782 11.09066286 127.50423895 cam_1_depth_optical_frame cam_2_depth_optical_frame` on main node using the returned `x y z yaw pitch roll` for each camera transformation. 
+10. run `rviz` and add each pointcloud by selecting add -> by topic -> cam_x/depth/color/points/pointcloud2. Change flat squares to points under each pointcloud -> style for better fps. 
+11. Change the fixed frame from "map" to "cam_2_depth_optical_frame"
