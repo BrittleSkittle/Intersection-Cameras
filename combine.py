@@ -23,106 +23,85 @@ def yawpitchrolldecomposition(R):
 
 
 try:
-    ids1 = pickle.load(open('./ids1.pkl', 'rb'))
-    corners1 = pickle.load(open('./corners3D1.pkl', 'rb'))
+    ids_node1 = pickle.load(open('./ids1.pkl', 'rb'))
+    corners_node1 = pickle.load(open('./corners3D1.pkl', 'rb'))
 except Exception as e:
     print('Exception for Node 1: '+str(e))
 
 try:
-    ids2 = pickle.load(open('./ids2.pkl', 'rb'))
-    corners2 = pickle.load(open('./corners3D2.pkl', 'rb'))
+    ids_node2 = pickle.load(open('./ids2.pkl', 'rb'))
+    corners_node2 = pickle.load(open('./corners3D2.pkl', 'rb'))
 except Exception as e:
     print('Exception for Node 2: '+str(e))
 
 try:
-    ids3 = pickle.load(open('./ids3.pkl', 'rb'))
-    corners3 = pickle.load(open('./corners3D3.pkl', 'rb'))
+    ids_node3 = pickle.load(open('./ids3.pkl', 'rb'))
+    corners_node3 = pickle.load(open('./corners3D3.pkl', 'rb'))
 except Exception as e:
     print('Exception for Node 3: '+str(e))
 
 try:
-    ids4 = pickle.load(open('./ids4.pkl', 'rb'))
-    corners4 = pickle.load(open('./corners3D4.pkl', 'rb'))
+    ids_node4 = pickle.load(open('./ids4.pkl', 'rb'))
+    corners_node4 = pickle.load(open('./corners3D4.pkl', 'rb'))
 except Exception as e:
     print('Exception for Node 4: '+str(e))
     
-common_points1_2 = []
-common_points1_3 = []
-common_points1_4 = []
-common_points2 = []
-common_points3 = []
-common_points4 = []
-common_count = 0
-try:
-    for x in range(len(ids1)):
-        for y in range(len(ids4)):
-            if ids1[x] == ids4[y]:
-                common_count = common_count + 1
-                for z in range(4):
-                    common_points1_4.append(corners1[x][z])
-                    common_points4.append(corners4[y][z])
-    print(str(common_count) + " common ids found.")
-except Exception as e:
-    print('Exception in comparison of Nodes 1 and 4: '+str(e))
-common_points1arr = np.asarray(common_points1_4)
-common_points4arr = np.asarray(common_points4)
-#print(common_points1arr)
-rotation1_4, translation1_4, rmsd1_4 = kabsch.calculate_transformation_kabsch(np.transpose(common_points1arr),np.transpose(common_points4arr))
-print('Node 4 to 1:\n')
-print(rotation1_4)
-print(translation1_4)
-yawpitchroll_angles = -180*yawpitchrolldecomposition(rotation1_4)/math.pi
-yawpitchroll_angles[0,0] = (360-yawpitchroll_angles[0,0])%360 # change rotation sense if needed, comment this line otherwise
-yawpitchroll_angles[1,0] = yawpitchroll_angles[1,0]+90
-print(yawpitchroll_angles)
-print('')
 
+common_points1 = []
+common_points2 = []
 common_count = 0
+
+Node1 = input("Input first Node\n")
+Node2 = input("Input second Node\n")
+
+if int(Node1) == 1:
+    ids1 = ids_node1
+    corners1 = corners_node1
+elif int(Node1) == 2:
+    ids1 = ids_node2
+    corners1 = corners_node2
+elif int(Node1) == 3:
+    ids1 = ids_node3
+    corners1 = corners_node3
+elif int(Node1) == 4:
+    ids1 = ids_node4
+    corners1 = corners_node4
+
+if int(Node2) == 1:
+    ids2 = ids_node1
+    corners2 = corners_node1
+elif int(Node2) == 2:
+    ids2 = ids_node2
+    corners2 = corners_node2
+elif int(Node2) == 3:
+    ids2 = ids_node3
+    corners2 = corners_node3
+elif int(Node2) == 4:
+    ids2 = ids_node4
+    corners2 = corners_node4
+
 try:
     for x in range(len(ids1)):
         for y in range(len(ids2)):
             if ids1[x] == ids2[y]:
                 common_count = common_count + 1
                 for z in range(4):
-                    common_points1_2.append(corners1[x][z])
+                    common_points1.append(corners1[x][z])
                     common_points2.append(corners2[y][z])
     print(str(common_count) + " common ids found.")
 except Exception as e:
-    print('Exception in comparison of Nodes 1 and 2: '+str(e))
-common_points1arr = np.asarray(common_points1_2)
-common_points2arr = np.asarray(common_points2)
-#print(common_points1)
-rotation1_2, translation1_2, rmsd1_2 = kabsch.calculate_transformation_kabsch(np.transpose(common_points1arr),np.transpose(common_points2arr))
-print('Node 2 to 1:\n')
+    print('Exception in comparison of Nodes '+Node1+' and '+Node2+': '+str(e))
+common_points1arr = np.asarray(common_points1)
+common_points4arr = np.asarray(common_points2)
+#print(common_points1arr)
+rotation1_2, translation1_2, rmsd1_2 = kabsch.calculate_transformation_kabsch(np.transpose(common_points1arr),np.transpose(common_points4arr))
+print('Node '+Node2+' to '+Node1+':\n')
 print(rotation1_2)
 print(translation1_2)
 yawpitchroll_angles = -180*yawpitchrolldecomposition(rotation1_2)/math.pi
-yawpitchroll_angles[0,0] = (360-yawpitchroll_angles[0,0])%360 # change rotation sense if needed, comment this line otherwise
-yawpitchroll_angles[1,0] = yawpitchroll_angles[1,0]+90
+#yawpitchroll_angles[0,0] = (360-yawpitchroll_angles[0,0])%360 # change rotation sense if needed, comment this line otherwise
+#yawpitchroll_angles[1,0] = yawpitchroll_angles[1,0]+90
 print(yawpitchroll_angles)
 print('')
 
-common_count = 0
-try:
-    for x in range(len(ids1)):
-        for y in range(len(ids3)):
-            if ids1[x] == ids3[y]:
-                common_count = common_count + 1
-                for z in range(4):
-                    common_points1_3.append(corners1[x][z])
-                    common_points3.append(corners3[y][z])
-    print(str(common_count) + " common ids found.")
-except Exception as e:
-    print('Exception in comparison of Nodes 1 and 3: '+str(e))
-common_points1arr = np.asarray(common_points1_3)
-common_points3arr = np.asarray(common_points3)
-#print(common_points1)
-rotation1_3, translation1_3, rmsd1_3 = kabsch.calculate_transformation_kabsch(np.transpose(common_points1arr),np.transpose(common_points3arr))
-print('Node 3 to 1:\n')
-print(rotation1_3)
-print(translation1_3)
-yawpitchroll_angles = -180*yawpitchrolldecomposition(rotation1_3)/math.pi
-yawpitchroll_angles[0,0] = (360-yawpitchroll_angles[0,0])%360 # change rotation sense if needed, comment this line otherwise
-yawpitchroll_angles[1,0] = yawpitchroll_angles[1,0]+90
-print(yawpitchroll_angles)
 
