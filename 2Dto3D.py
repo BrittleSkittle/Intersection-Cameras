@@ -51,5 +51,5 @@ for id in corners:
 pipeline.stop()
 pickle.dump(corners3D, open('corners3D'+Node+'.pkl','wb'))
 if(Node!=1):
-    print('Points from node '+Node+' successfully converted to 3D. \n Now run server.py on Node 1 and client.py on this Node and input corners3d'+Node+'.pkl to transfer to Node 1.')
+    print('Points from node '+Node+' successfully converted to 3D. \n Now run server.py on Node 1 and client.py on this Node and input corners3D'+Node+'.pkl to transfer to Node 1.')
 #result = np.round(point_3d, 3)
