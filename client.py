@@ -1,9 +1,8 @@
 import socket
 import os
 import tqdm
-
-print('Type the name of the file you would like to send to Node1-1 in this directory.\n')
-filename = input("")
+print('MAKE SURE SERVER.PY IS RUNNING ON MAIN NODE')
+filename = input("Type the name of the file you would like to send to Node1-1 in this directory.\n")
 
 HOST = "10.33.1.1"  # Node1-1 IP
 PORT = 65432  # The port used by the server
