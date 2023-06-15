@@ -92,9 +92,9 @@ try:
 except Exception as e:
     print('Exception in comparison of Nodes '+Node1+' and '+Node2+': '+str(e))
 common_points1arr = np.asarray(common_points1)
-common_points4arr = np.asarray(common_points2)
+common_points2arr = np.asarray(common_points2)
 #print(common_points1arr)
-rotation1_2, translation1_2, rmsd1_2 = kabsch.calculate_transformation_kabsch(np.transpose(common_points1arr),np.transpose(common_points4arr))
+rotation1_2, translation1_2, rmsd1_2 = kabsch.calculate_transformation_kabsch(np.transpose(common_points1arr),np.transpose(common_points2arr))
 print('Node '+Node2+' to '+Node1+':\n')
 print(rotation1_2)
 print(translation1_2)
@@ -102,6 +102,7 @@ yawpitchroll_angles = -180*yawpitchrolldecomposition(rotation1_2)/math.pi
 #yawpitchroll_angles[0,0] = (360-yawpitchroll_angles[0,0])%360 # change rotation sense if needed, comment this line otherwise
 #yawpitchroll_angles[1,0] = yawpitchroll_angles[1,0]+90
 print(yawpitchroll_angles)
-print('')
-
+command = 'rosrun tf2_ros static_transform_publisher '+str(translation1_2[0])+' '+str(translation1_2[1])+' '+str(translation1_2[2])\
+    +' '+str(yawpitchroll_angles[0][0])+' '+str(yawpitchroll_angles[1][0])+' '+str(yawpitchroll_angles[2][0])+' cam_'+Node1+'_depth_optical_frame cam_'+Node2+'_depth_optical_frame'
+print(command)
 
