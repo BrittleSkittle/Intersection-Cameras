@@ -8,7 +8,7 @@ from numpy.linalg import det
 import matplotlib.pyplot as plt
 import matplotlib
 import signal
-signal.signal(signal.SIGINT, signal.SIG_DFL)
+signal.signal(signal.SIGINT, signal.SIG_DFL) #allows ctrl+c to close figure
 
 def yawpitchrolldecomposition(R):
     sin_x    = math.sqrt(R[2,0] * R[2,0] +  R[2,1] * R[2,1])    
@@ -110,12 +110,14 @@ command = 'rosrun tf2_ros static_transform_publisher '+str(translation1_2[0])+' 
     +' '+str(yawpitchroll_angles[0][0])+' '+str(yawpitchroll_angles[1][0])+' '+str(yawpitchroll_angles[2][0])+' cam_'+Node1+'_depth_optical_frame cam_'+Node2+'_depth_optical_frame'
 print(command)
 
+
+#Checking calibration error
 common_points1arr = np.transpose(common_points1arr)
 common_points2arr = np.transpose(common_points2arr)
 checkrot = np.dot(rotation1_2, common_points1arr)
 for i in range(3):
     checkrot[i,:] = checkrot[i,:]+translation1_2[i]
-print(str(checkrot-common_points2arr))
+print(str(checkrot-common_points2arr))#numerical error
 
 checkrot = np.transpose(checkrot)
 Ys = checkrot[:,0]
@@ -124,7 +126,7 @@ Xs = checkrot[:,2]
 
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
-ax.scatter(Xs, Ys, Zs, c='purple', marker='o')
+ax.scatter(Xs, Ys, Zs, c='purple', marker='o')#plots rotated and translated points
 ax.set_xlabel('Y')
 ax.set_ylabel('Z')
 ax.set_zlabel('X')
@@ -134,12 +136,12 @@ Ys = common_points1arr[:,0]
 Zs = common_points1arr[:,1]
 Xs = common_points1arr[:,2]
 
-ax.scatter(Xs, Ys, Zs, c='blue', marker='o')
+ax.scatter(Xs, Ys, Zs, c='blue', marker='o')#plots points from first node
 ax.set_xlabel('Y')
 ax.set_ylabel('Z')
 ax.set_zlabel('X')
 
-common_points2arr = np.transpose(common_points2arr)
+common_points2arr = np.transpose(common_points2arr)#plots points from second node
 Ys = common_points2arr[:,0]
 Zs = common_points2arr[:,1]
 Xs = common_points2arr[:,2]
