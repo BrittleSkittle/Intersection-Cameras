@@ -1,5 +1,5 @@
 # Intersection Camera
-The goal of this project is to combine the 3D point clouds of 4 different realsense depth cameras into a single calibrated view. Currently pointcloud display only works with 2 cameras. 
+The goal of this project is to combine the 3D point clouds of 4 different realsense depth cameras into a single calibrated view. 
 
 # Prerequisites
 - ros (tested with melodic)
