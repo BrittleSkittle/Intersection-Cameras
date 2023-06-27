@@ -13,6 +13,7 @@ HOST = "10.33.1.1"  # Node1-1 IP
 PORT = 65432  # Port to listen on (non-privileged ports are > 1023)
 
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+    print("Server is currently running...\n Now run client.py on a different node and type the file to transfer.")
     s.bind((HOST, PORT))
     s.listen()
     conn, addr = s.accept()
