@@ -13,9 +13,8 @@ The goal of this project is to combine the 3D point clouds of 4 different realse
 
 # Instructions
 1. Run `python3 corners.py` on current node. Enter the amount of ids you want to detect, this can range from 9 to 25. Try multiple `/dev/video` sources until it works. You may need to run as sudo. 
-2. If on main node skip this step. Otherwise run `python3 server.py` on the main node and `python3 client.py` on the current node, sending the appropriate ids pickle file.
-3. Run `python3 2Dto3D.py` on the current node to generate the 3D points from the 2D points. 
-4. Repeat step 2, except send the generated corners3D file instead of the ids file. 
+2. Run `python3 2Dto3D.py` on the current node to generate the 3D points from the 2D points. 
+4. Run `python3 server.py` on the main node and `python3 client.py` on the other nodes, sending the appropriate pickle files "idsX.pkl" and/or "corners3DX.pkl"to the main node.
 5. Run `python3 combine.py` on the main node, which will return the transformation matrices, the rotation matrices, and the "roll" "pitch" "yaw" matrices for each node relative to the main node. 
 6. Run `python3 EtherSenseClient.py` on each node besides 1.
 7. Run `python3 EtherSenseServer.py` on node 1. 
