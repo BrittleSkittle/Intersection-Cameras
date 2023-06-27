@@ -6,7 +6,7 @@ The goal of this project is to combine the 3D point clouds of 4 different realse
 - librealsense2 (https://github.com/IntelRealSense/librealsense/blob/master/doc/distribution_linux.md)
 - realsense_ros (https://github.com/IntelRealSense/realsense-ros/tree/ros1-legacy)
 - opencv for python (sudo apt-get install python3-opencv)
-- pip
+- pip(pip3)
     - numpy
     - pickle
     - tqdm
@@ -16,22 +16,33 @@ The goal of this project is to combine the 3D point clouds of 4 different realse
 2. If on main node skip this step. Otherwise run `python3 server.py` on the main node and `python3 client.py` on the current node, sending the appropriate ids pickle file.
 3. Run `python3 2Dto3D.py` on the current node to generate the 3D points from the 2D points. 
 4. Repeat step 2, except send the generated corners3D file instead of the ids file. 
-5. Run `combine.py` on the main node, which will return the transformation matrices, the rotation matrices, and the "roll" "pitch" "yaw" matrices for each node relative to the main node. 
-6. Run `roscore` on main node. 
-7. Run `export ROS_MASTER_URI=http://node1-1.intersection.orbit-lab.org:11311/ ` on each node using the main node for the link. 
-8. Run the following commands on each node respectively:
+5. Run `python3 combine.py` on the main node, which will return the transformation matrices, the rotation matrices, and the "roll" "pitch" "yaw" matrices for each node relative to the main node. 
+6. Run `python3 EtherSenseClient.py` on each node besides 1.
+7. Run `python3 EtherSenseServer.py` on node 1. 
+8. We are not yet sure how to access the streamed data. 
 
-`roslaunch realsense2_camera rs_camera.launch camera:=cam_1 serial_no:=821312060217 filters:=pointcloud`
 
-`roslaunch realsense2_camera rs_camera.launch camera:=cam_2 serial_no:=751412060500 filters:=pointcloud`
+- The steps below were found to be inconsistent
 
-`roslaunch realsense2_camera rs_camera.launch camera:=cam_3 serial_no:=751412060120 filters:=pointcloud`
+6. ~~Run `roscore` on main node.~~
+7. ~~Run `export ROS_MASTER_URI=http://node1-1.intersection.orbit-lab.org:11311/ ` on each node using the main node for the link.~~
+8. ~~Run the following commands on each node respectively:~~
 
-`roslaunch realsense2_camera rs_camera.launch camera:=cam_4 serial_no:=821312060260 filters:=pointcloud`
+- ~~`roslaunch realsense2_camera rs_camera.launch camera:=cam_1 serial_no:=821312060217 filters:=pointcloud`~~
 
-9. run `rosrun tf2_ros static_transform_publisher 0.75464242 -1.047124 1.22725315 53.92585782 11.09066286 127.50423895 cam_1_depth_optical_frame cam_2_depth_optical_frame` on main node using the returned `x y z yaw pitch roll` for each camera transformation. 
-10. run `rviz` and add each pointcloud by selecting add -> by topic -> cam_x/depth/color/points/pointcloud2. Change flat squares to points under each pointcloud -> style for better fps. 
-11. Change the fixed frame from "map" to "cam_2_depth_optical_frame"
+- ~~`roslaunch realsense2_camera rs_camera.launch camera:=cam_2 serial_no:=751412060500 filters:=pointcloud`~~
 
-#Troubleshooting
-- If camera is not loading try `sudo apt-get remove librealsense2-dkms`
+- ~~`roslaunch realsense2_camera rs_camera.launch camera:=cam_3 serial_no:=751412060120 filters:=pointcloud`~~
+
+- ~~`roslaunch realsense2_camera rs_camera.launch camera:=cam_4 serial_no:=821312060260 filters:=pointcloud`~~
+
+9. ~~run `rosrun tf2_ros static_transform_publisher 0.75464242 -1.047124 1.22725315 53.92585782 11.09066286 127.50423895 cam_1_depth_optical_frame cam_2_depth_optical_frame` on main node using the returned `x y z yaw pitch roll` for each camera transformation.~~ 
+10. ~~run `rviz` and add each pointcloud by selecting add -> by topic -> cam_x/depth/color/points/pointcloud2. Change flat squares to points under each pointcloud -> style for better fps.~~ 
+11. ~~Change the fixed frame from "map" to "cam_2_depth_optical_frame"~~
+
+
+# Troubleshooting
+- If camera is not loading or is very slow try `sudo apt-get remove librealsense2-dkms`
+    - Next try running `realsense-viewer` and turning the streams on and off again. If that doesn't work click on the 3 Horizontal lines and select "hardware reset"
+- Some scripts may need to be run as sudo
+- To test corners.py script set ids to be detected to 30 or greater
