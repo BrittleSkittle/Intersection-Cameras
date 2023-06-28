@@ -2,6 +2,11 @@
 # Copyright(c) 2015-2017 Intel Corporation. All Rights Reserved.
 
 """
+OpenCV and Numpy Point cloud Software Renderer
+
+This sample is mostly for demonstration and educational purposes.
+It really doesn't offer the quality or performance that can be
+achieved with hardware acceleration.
 
 Usage:
 ------
@@ -12,9 +17,11 @@ Mouse:
 Keyboard: 
     [p]     Pause
     [r]     Reset View
+    [d]     Cycle through decimation values
     [z]     Toggle point scaling
     [c]     Toggle color source
     [s]     Save PNG (./out.png)
+    [e]     Export points to ply (./out.ply)
     [q\ESC] Quit
 """
 
@@ -128,8 +135,18 @@ def view(v):
 
 
 
-def pointcloud(out, verts, texcoords, color):
-    proj = project(view(verts))
+def pointcloud(out, verts, texcoords, color, painter=False):
+    """draw point cloud with optional painter's algorithm"""
+    if painter:
+        # Painter's algo, sort points from back to front
+
+        # get reverse sorted indices by z (in view-space)
+        # https://gist.github.com/stevenvo/e3dad127598842459b68
+        v = view(verts)
+        s = v[:, 2].argsort()[::-1]
+        proj = project(v[s])
+    else:
+        proj = project(view(verts))
 
     if state.scale:
         proj *= 0.5**state.decimate
@@ -145,7 +162,13 @@ def pointcloud(out, verts, texcoords, color):
     m = im & jm
 
     cw, ch = color.shape[:2][::-1]
-    v, u = (texcoords * (cw, ch) + 0.5).astype(np.uint32).T
+    if painter:
+        # sort texcoord with same indices as above
+        # texcoords are [0..1] and relative to top-left pixel corner,
+        # multiply by size and add 0.5 to center
+        v, u = (texcoords[s] * (cw, ch) + 0.5).astype(np.uint32).T
+    else:
+        v, u = (texcoords * (cw, ch) + 0.5).astype(np.uint32).T
     # clip texcoords to image
     np.clip(u, 0, ch-1, out=u)
     np.clip(v, 0, cw-1, out=v)
@@ -160,12 +183,11 @@ view1 = True
 view2 = True
 try:
     verts = pickle.load(open('./verts'+str(1)+'.pkl', 'rb'))
-    for vert in verts:
-        print(vert)
+
     texcoords = pickle.load(open('./texcoords'+str(1)+'.pkl', 'rb'))
-    print(texcoords)
+
     color_source = pickle.load(open('./color_source'+str(1)+'.pkl', 'rb'))
-    print(color_source)
+
 except Exception as e:
     print('Pickle load exception: '+str(e))
 
@@ -177,10 +199,14 @@ except Exception as e:
     print('Pickle load exception: '+str(e))
 
 while True:
-
+    # Grab camera data
+    
+    # Render
     now = time.time()
 
     out.fill(0)
+
+    
 
     if not state.scale or out.shape[:2] == (h, w):
         if(view1):
@@ -223,6 +249,7 @@ while True:
 
     if key == ord("f"):
         Node = input("Type current node number.\n")
+        #out, verts, texcoords, color_source
         pickle.dump(verts, open('verts'+Node+'.pkl','wb'))
         pickle.dump(texcoords, open('texcoords'+Node+'.pkl','wb'))
         pickle.dump(color_source, open('color_source'+Node+'.pkl','wb'))
@@ -233,3 +260,5 @@ while True:
 
     if key in (27, ord("q")) or cv2.getWindowProperty(state.WIN_NAME, cv2.WND_PROP_AUTOSIZE) < 0:
         break
+
+# Stop streaming
