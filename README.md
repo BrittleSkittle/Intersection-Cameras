@@ -21,7 +21,8 @@ The goal of this project is to combine the 3D point clouds of 4 different realse
 7. `Run static_pointcloud_viewer` on the main node. Press the number keys to toggle viewing of each respective node. Press 't' to toggle the transform from the selected nodes.  
 
 
-
+- The steps below send low quality depth data to a node. We are unsure how to access and manipulate this data.
+ 
 6. ~~Run `python3 EtherSenseClient.py` on each node besides 1.~~
 7. ~~Run `python3 EtherSenseServer.py` on node 1.~~ 
 8. ~~We are not yet sure how to access the streamed data.~~ 
