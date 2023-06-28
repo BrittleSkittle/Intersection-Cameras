@@ -64,9 +64,12 @@ class AppState:
 state = AppState()
 
 
-w, h = 1280,720
+w, h = 640,480
 
-
+pc = rs.pointcloud()
+decimate = rs.decimation_filter()
+decimate.set_option(rs.option.filter_magnitude, 2 ** state.decimate)
+colorizer = rs.colorizer()
 
 def mouse_cb(event, x, y, flags, param):
 
@@ -135,7 +138,7 @@ def view(v):
 
 
 
-def pointcloud(out, verts, texcoords, color, painter=False):
+def pointcloud(out, verts, texcoords, color, painter=True):
     """draw point cloud with optional painter's algorithm"""
     if painter:
         # Painter's algo, sort points from back to front
@@ -181,23 +184,54 @@ out = np.empty((h, w, 3), dtype=np.uint8)
 
 view1 = True
 view2 = True
+view3 = False
+Node1 = input("Please enter first node.")
+Node2 = input("Please enter second node.")
 try:
-    verts = pickle.load(open('./verts'+str(1)+'.pkl', 'rb'))
+    rotation1_2 = pickle.load(open('./rotation'+Node1+'_'+Node2+'.pkl', 'rb'))
+    translation1_2 = pickle.load(open('./translation'+Node1+'_'+Node2+'.pkl', 'rb'))
+    verts = pickle.load(open('./verts'+Node1+'.pkl', 'rb'))
+    
+    verts1_2 = verts
+    verts1_2 = np.transpose(verts1_2)
+    verts1_2 = np.dot(rotation1_2, verts1_2)
+    for i in range(3):
+        verts1_2[i,:] = verts1_2[i,:]+translation1_2[i]
+    verts1_2 = np.transpose(verts1_2)
 
-    texcoords = pickle.load(open('./texcoords'+str(1)+'.pkl', 'rb'))
+    texcoords = pickle.load(open('./texcoords'+Node1+'.pkl', 'rb'))
 
-    color_source = pickle.load(open('./color_source'+str(1)+'.pkl', 'rb'))
+    color_source = pickle.load(open('./color_source'+Node1+'.pkl', 'rb'))
 
 except Exception as e:
     print('Pickle load exception: '+str(e))
 
 try:
-    verts2 = pickle.load(open('./verts'+str(2)+'.pkl', 'rb'))
-    texcoords2 = pickle.load(open('./texcoords'+str(2)+'.pkl', 'rb'))
-    color_source2 = pickle.load(open('./color_source'+str(2)+'.pkl', 'rb'))
+    verts2 = pickle.load(open('./verts'+Node2+'.pkl', 'rb'))
+    texcoords2 = pickle.load(open('./texcoords'+Node2+'.pkl', 'rb'))
+    color_source2 = pickle.load(open('./color_source'+Node2+'.pkl', 'rb'))
 except Exception as e:
     print('Pickle load exception: '+str(e))
 
+Node3 = str(3)
+try:
+    verts3 = pickle.load(open('./verts'+Node3+'.pkl', 'rb'))
+    texcoords3 = pickle.load(open('./texcoords'+Node3+'.pkl', 'rb'))
+    color_source3 = pickle.load(open('./color_source'+Node3+'.pkl', 'rb'))
+except Exception as e:
+    print('Pickle load exception: '+str(e))
+
+Node4 = str(4)
+try:
+    verts4 = pickle.load(open('./verts'+Node4+'.pkl', 'rb'))
+    texcoords4 = pickle.load(open('./texcoords'+Node4+'.pkl', 'rb'))
+    color_source4 = pickle.load(open('./color_source'+Node4+'.pkl', 'rb'))
+except Exception as e:
+    print('Pickle load exception: '+str(e))
+
+viewTrans = False
+view4 = False
+view3 = False
 while True:
     # Grab camera data
     
@@ -213,6 +247,12 @@ while True:
             pointcloud(out, verts, texcoords, color_source)
         if(view2):
             pointcloud(out,verts2,texcoords2,color_source2)
+        if(viewTrans):
+            pointcloud(out,verts1_2,texcoords,color_source)
+        if(view3):
+            pointcloud(out,verts3,texcoords3,color_source3)
+        if(view4):
+            pointcloud(out,verts4,texcoords4,color_source4)
     else:
         tmp = np.zeros((h, w, 3), dtype=np.uint8)
         pointcloud(tmp, verts, texcoords, color_source)
@@ -236,7 +276,9 @@ while True:
     if key == ord("p"):
         state.paused ^= True
 
-
+    if key == ord("d"):
+        state.decimate = (state.decimate + 1) % 3
+        decimate.set_option(rs.option.filter_magnitude, 2 ** state.decimate)
     if key == ord("z"):
         state.scale ^= True
 
@@ -246,6 +288,12 @@ while True:
         view1 = not view1
     if key == ord("2"):
         view2 = not view2
+    if key == ord("t"):
+        viewTrans = not viewTrans
+    if key == ord("3"):
+        view3 = not view3
+    if key == ord("4"):
+        view4 = not view4
 
     if key == ord("f"):
         Node = input("Type current node number.\n")
