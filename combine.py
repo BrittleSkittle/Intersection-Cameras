@@ -107,7 +107,8 @@ command = 'rosrun tf2_ros static_transform_publisher '+str(translation1_2[0])+' 
     +' '+str(yawpitchroll_angles[0][0])+' '+str(yawpitchroll_angles[1][0])+' '+str(yawpitchroll_angles[2][0])+' cam_'+Node1+'_depth_optical_frame cam_'+Node2+'_depth_optical_frame'
 print(command)
 
-
+pickle.dump(rotation1_2,open('rotation'+Node1+'_'+Node2+'.pkl','wb'))
+pickle.dump(translation1_2,open('translation'+Node1+'_'+Node2+'.pkl','wb'))
 #Checking calibration error
 common_points1arr = np.transpose(common_points1arr)
 common_points2arr = np.transpose(common_points2arr)
