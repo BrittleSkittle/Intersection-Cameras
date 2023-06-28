@@ -16,7 +16,10 @@ The goal of this project is to combine the 3D point clouds of 4 different realse
 2. Run `python3 2Dto3D.py` on the current node to generate the 3D points from the 2D points. 
 3. Run `python3 server.py` on the main node and `python3 client.py` on the other nodes, sending the appropriate pickle files "idsX.pkl" and/or "corners3DX.pkl"to the main node.
 4. Run `python3 combine.py` on the main node, which will return the transformation matrices, the rotation matrices, and the "roll" "pitch" "yaw" matrices for each node relative to the main node. 
-5. 
+5. Run `python3 opencv_pointcloud_viewer` on each node and press 'd' until the resolution shown at the top of the window is as desired. Then press 'f' to download the pointcloud data and enter the current node. _This may need to be done twice to ensure data capture._
+6. Run `python3 server.py` again on the main node and `python3 client.py` on the other nodes and send "color_sourceX.pkl", "texcoordsX.pkl", and "vertsX.pkl" to the main node. 
+7. `Run static_pointcloud_viewer` on the main node. Press the number keys to toggle viewing of each respective node. Press 't' to toggle the transform from the selected nodes.  
+
 
 
 6. ~~Run `python3 EtherSenseClient.py` on each node besides 1.~~
