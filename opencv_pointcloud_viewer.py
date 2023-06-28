@@ -22,7 +22,6 @@ Keyboard:
     [c]     Toggle color source
     [s]     Save PNG (./out.png)
     [e]     Export points to ply (./out.ply)
-    [f]     Export pointcloud to pickle files
     [q\ESC] Quit
 """
 
@@ -290,6 +289,7 @@ while True:
 
     if key == ord("f"):
         Node = input("Type current node number.\n")
+        time.sleep(0.01)
         #out, verts, texcoords, color_source
         pickle.dump(verts, open('verts'+Node+'.pkl','wb'))
         pickle.dump(texcoords, open('texcoords'+Node+'.pkl','wb'))
