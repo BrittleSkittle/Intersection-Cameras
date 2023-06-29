@@ -41,7 +41,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                     progress.update(len(bytes_read))
             progress.close()
             conn.close() 
-            print("\n "+filename+" received. Run client.py on the same or a different node to continue. 'Ctrl-C' to quit")
+            print(filename+" received. Run client.py on the same or a different node to continue. 'Ctrl-C' to quit\n")
     except KeyboardInterrupt:
         print('\n Stopping server.')
         conn.close() 
