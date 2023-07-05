@@ -12,7 +12,7 @@ The goal of this project is to combine the 3D point clouds of 4 different realse
     - tqdm
 
 # Instructions
-1. Run `python3 corners.py` on current node. Enter the amount of ids you want to detect, this can range from 9 to 25. Try multiple `/dev/video` sources until it works. You may need to run as sudo. 
+1. Run `python3 corners.py` on current node. Enter the amount of ids you want to detect, this can range from 9 to 40 depending on the setup. Try multiple `/dev/video` sources until it works. You may need to run as sudo. 
 2. Run `python3 2Dto3D.py` on the current node to generate the 3D points from the 2D points. 
 3. Run `python3 server.py` on the main node and `python3 client.py` on the other nodes, sending the appropriate pickle files "idsX.pkl" and/or "corners3DX.pkl"to the main node.
 4. Run `python3 combine.py` on the main node, which will return the transformation matrices, the rotation matrices, and the "roll" "pitch" "yaw" matrices for each node relative to the main node. 
@@ -51,4 +51,9 @@ The goal of this project is to combine the 3D point clouds of 4 different realse
 - If camera is not loading or is very slow try `sudo apt-get remove librealsense2-dkms`
     - Next try running `realsense-viewer` and turning the streams on and off again. If that doesn't work click on the 3 Horizontal lines and select "hardware reset"
 - Some scripts may need to be run as sudo
-- To test corners.py script set ids to be detected to 30 or greater
+- To test corners.py script set ids to be detected to 40 or greater
+
+# Desired Improvements
+- Improvement of corners.py. It currently only records markers captured in single frame, while each fram detects different ids. It would be optimal to record all markers detected over a period of time. 
+- Automating client.py. It currently uses manual user input to determine which file to send. It would be better to automatically detect relevant files and send them. 
+- Development of a "master script" that runs all of the required steps on one of the nodes, detecting whether or not the server is running on another node. 
