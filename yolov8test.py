@@ -1,7 +1,7 @@
 import cv2 as cv
 from ultralytics import YOLO
 
-model = YOLO('yolov8m-cls.pt')
+model = YOLO('yolov8m.pt')
 input_video = cv.VideoCapture('/dev/video3')
 input_video.set(cv.CAP_PROP_FRAME_WIDTH, 1280)
 input_video.set(cv.CAP_PROP_FRAME_HEIGHT, 720)
