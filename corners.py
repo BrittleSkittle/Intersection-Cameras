@@ -1,8 +1,9 @@
 #might need to run as sudo
 import cv2 as cv
 import pickle
+import numpy as np
 #Try different /video numbers in /dev folder
-input_video = cv.VideoCapture('/dev/video2')
+input_video = cv.VideoCapture('/dev/video3')
 input_video.set(cv.CAP_PROP_FRAME_WIDTH, 1280)
 input_video.set(cv.CAP_PROP_FRAME_HEIGHT, 720)
 #detector_params = cv.aruco.DetectorParameters()
@@ -13,30 +14,51 @@ print('Type the number of the node you are currently on.\n')
 Node = input("")
 print('Type the number of markers you want to capture.\n')
 markerMin = int(input(""))
-
+prevIds = None
+prevCorners = None
 while input_video.grab():
     ret, image = input_video.retrieve()
     image_copy = image.copy()
     corners, ids, rejected = cv.aruco.detectMarkers(image, dictionary)
-    print(ids)
     print (corners)
-    # si au moins un marqueur est détecté
+    print(ids)
+
+    
     n = 0
     if ids is not None and len(ids) > 0:
-        #liste_ids = sorted(ids.flatten())
-        #print(ids)
-        #print (corners)
-        n = len(ids)
-        print (n)
+        print(len(ids))
+        if prevIds is not None:
+        #if False:
+            idlen = len(ids)
+            newids = None
+            newcorners = None
+
+            for i in range(len(prevIds)):
+                match = False
+                for j in range(len(ids)):
+                    if prevIds[i] == ids[j]:
+                        match = True
+                if not match:
+                    if newids is None:
+                        newids = prevIds[i]
+                    else:
+                        newids = np.row_stack((newids,prevIds[i]))
+                    ids = np.row_stack((ids,prevIds[i]))
+                    corners.append(prevCorners[i])
+
+            print("new len: "+str(len(ids)))
+            print("new corners len: "+str(len(corners)))
+            #print(ids)
+
+        prevIds = ids
+        prevCorners = corners
         cv.aruco.drawDetectedMarkers(image_copy, corners)
-        for i in range (n):
-            center = tuple(corners[i][0][0])
-            cv.circle(image_copy, center, 5, (0,0,255), -1)
+        
     cv.imshow("out", image_copy)
     key = cv.waitKey(20) & 0xFF
     if key == 27:
         break
-    if n>markerMin:
+    if n>=markerMin:
         break
 
 pickle.dump(ids,open('ids'+Node+'.pkl', 'wb'))
