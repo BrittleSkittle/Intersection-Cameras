@@ -53,6 +53,7 @@ while input_video.grab():
         prevIds = ids
         prevCorners = corners
         cv.aruco.drawDetectedMarkers(image_copy, corners)
+        n = len(ids)
         
     cv.imshow("out", image_copy)
     key = cv.waitKey(20) & 0xFF
