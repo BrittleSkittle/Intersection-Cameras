@@ -41,26 +41,27 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         if filename == "all":
             try:
                 sendFile("ids"+str(Node)+".pkl")
-            except Exception as e:
-                print(str(filename)+"not sent due to Exception: "+str(e)+".\n")
-            try:
-                sendFile("corners"+str(Node)+".pkl")
+                time.sleep(1)
             except Exception as e:
                 print(str(filename)+"not sent due to Exception: "+str(e)+".\n")
             try:
                 sendFile("corners3D"+str(Node)+".pkl")
+                time.sleep(1)
             except Exception as e:
                 print(str(filename)+"not sent due to Exception: "+str(e)+".\n")
             try:
                 sendFile("color_source"+str(Node)+".pkl")
+                time.sleep(1)
             except Exception as e:
                 print(str(filename)+"not sent due to Exception: "+str(e)+".\n")
             try:
                 sendFile("texcoords"+str(Node)+".pkl")
+                time.sleep(1)
             except Exception as e:
                 print(str(filename)+"not sent due to Exception: "+str(e)+".\n")
             try:
                 sendFile("verts"+str(Node)+".pkl")
+                time.sleep(1)
             except Exception as e:
                 print(str(filename)+"not sent due to Exception: "+str(e)+".\n")
             filename = "q"
