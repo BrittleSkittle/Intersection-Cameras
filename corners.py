@@ -3,7 +3,7 @@ import cv2 as cv
 import pickle
 import numpy as np
 #Try different /video numbers in /dev folder
-input_video = cv.VideoCapture('/dev/video3')
+input_video = cv.VideoCapture('/dev/video2')
 input_video.set(cv.CAP_PROP_FRAME_WIDTH, 1280)
 input_video.set(cv.CAP_PROP_FRAME_HEIGHT, 720)
 #detector_params = cv.aruco.DetectorParameters()
