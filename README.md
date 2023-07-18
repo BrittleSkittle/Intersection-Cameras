@@ -52,6 +52,7 @@ The goal of this project is to combine the 3D point clouds of 4 different realse
     - Next try running `realsense-viewer` and turning the streams on and off again. If that doesn't work click on the 3 Horizontal lines and select "hardware reset"
 - Some scripts may need to be run as sudo
 - To test corners.py script set ids to be detected to 40 or greater
+- If image appears spotty or unclear run `realsense-viewer` and click "hardware reset"
 
 # Desired Improvements
 - Improvement of corners.py. It currently only records markers captured in single frame, while each fram detects different ids. It would be optimal to record all markers detected over a period of time. 
