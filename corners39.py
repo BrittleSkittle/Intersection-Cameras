@@ -58,6 +58,8 @@ while input_video.grab():
         
     cv.imshow("out", image_copy)
     key = cv.waitKey(20) & 0xFF
+    if key == ord("s"):
+        break
     if key == 27:
         break
     if n>=markerMin:
