@@ -10,8 +10,9 @@ The goal of this project is to combine the 3D point clouds of 4 different realse
     - numpy
     - pickle
     - tqdm
+- Ultralytics (for Detection)
 
-# Instructions
+# Calibration Instructions
 1. Run `python3 corners.py` on current node. Enter the amount of ids you want to detect, this can range from 9 to 40 depending on the setup. Try multiple `/dev/video` sources until it works. You may need to run as sudo. 
 2. Run `python3 2Dto3D.py` on the current node to generate the 3D points from the 2D points. 
 3. Run `python3 server.py` on the main node and `python3 client.py` on the other nodes, sending the appropriate pickle files "idsX.pkl" and/or "corners3DX.pkl"to the main node.
@@ -20,7 +21,12 @@ The goal of this project is to combine the 3D point clouds of 4 different realse
 6. Run `python3 server.py` again on the main node and `python3 client.py` on the other nodes and send "color_sourceX.pkl", "texcoordsX.pkl", and "vertsX.pkl" to the main node. 
 7. `Run static_pointcloud_viewer` on the main node. Press the number keys to toggle viewing of each respective node. Press 't' to toggle the transform from the selected nodes.  
 
+# Detection Instructions
+1. Run `python3 yolov8.py` with python 3.9 or higher. Change the Yolo model as needed.
+    - sizes are 's m l x' in increasing order
+    - add -seg to use segmentation
 
+# Legacy Instructions
 - The steps below send low quality depth data to a node. We are unsure how to access and manipulate this data.
  
 6. ~~Run `python3 EtherSenseClient.py` on each node besides 1.~~
