@@ -294,6 +294,7 @@ while True:
         pickle.dump(verts, open('verts'+Node+'.pkl','wb'))
         pickle.dump(texcoords, open('texcoords'+Node+'.pkl','wb'))
         pickle.dump(color_source, open('color_source'+Node+'.pkl','wb'))
+        break
 
     if key == ord("s"):
         cv2.imwrite('./out.png', out)
