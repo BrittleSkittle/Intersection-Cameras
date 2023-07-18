@@ -28,9 +28,12 @@ def sendFile(filename):
     progress.close()
 
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+    Node = input("Start server on main node. Then enter the current node number. ")
     s.connect((HOST, PORT))
-    Node = input("Enter the current node number. ")
     filename = "NA"
+    if Node == "1":
+        print("Host Node entered, not sending files.")
+        filename = "q"
     while filename != "q":
 
         print("Type the name of the file you would like to send to Node1-1 in this directory, or type 'all' to send all relevant files. \n")
@@ -39,27 +42,27 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             try:
                 sendFile("ids"+str(Node)+".pkl")
             except Exception as e:
-                print(str(filename)+"not sent due to Exception: "+str(Exception)+".\n")
+                print(str(filename)+"not sent due to Exception: "+str(e)+".\n")
             try:
                 sendFile("corners"+str(Node)+".pkl")
             except Exception as e:
-                print(str(filename)+"not sent due to Exception: "+str(Exception)+".\n")
+                print(str(filename)+"not sent due to Exception: "+str(e)+".\n")
             try:
                 sendFile("corners3D"+str(Node)+".pkl")
             except Exception as e:
-                print(str(filename)+"not sent due to Exception: "+str(Exception)+".\n")
+                print(str(filename)+"not sent due to Exception: "+str(e)+".\n")
             try:
                 sendFile("color_source"+str(Node)+".pkl")
             except Exception as e:
-                print(str(filename)+"not sent due to Exception: "+str(Exception)+".\n")
+                print(str(filename)+"not sent due to Exception: "+str(e)+".\n")
             try:
                 sendFile("texcoords"+str(Node)+".pkl")
             except Exception as e:
-                print(str(filename)+"not sent due to Exception: "+str(Exception)+".\n")
+                print(str(filename)+"not sent due to Exception: "+str(e)+".\n")
             try:
                 sendFile("verts"+str(Node)+".pkl")
             except Exception as e:
-                print(str(filename)+"not sent due to Exception: "+str(Exception)+".\n")
+                print(str(filename)+"not sent due to Exception: "+str(e)+".\n")
             filename = "q"
             break
         else:
