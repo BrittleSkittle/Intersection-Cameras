@@ -48,6 +48,7 @@ while input_video.grab():
 
             print("new len: "+str(len(ids)))
             print("new corners len: "+str(len(corners)))
+            print("Press s to save detected markers.")
             #print(ids)
 
         prevIds = ids
@@ -57,6 +58,8 @@ while input_video.grab():
         
     cv.imshow("out", image_copy)
     key = cv.waitKey(20) & 0xFF
+    if key == ord("s"):
+        break
     if key == 27:
         break
     if n>=markerMin:
