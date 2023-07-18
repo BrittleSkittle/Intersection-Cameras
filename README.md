@@ -61,6 +61,6 @@ The goal of this project is to combine the 3D point clouds of 4 different realse
 - If image appears spotty or unclear run `realsense-viewer` and click "hardware reset"
 
 # Desired Improvements
-- Improvement of corners.py. It currently only records markers captured in single frame, while each fram detects different ids. It would be optimal to record all markers detected over a period of time. 
-- Automation of client.py. It currently uses manual user input to determine which file to send. It would be better to automatically detect relevant files and send them. 
-- Development of a "master script" that runs all of the required steps on one of the nodes, detecting whether or not the server is running on another node. 
+- [x] Improvement of corners.py. It currently only records markers captured in single frame, while each fram detects different ids. It would be optimal to record all markers detected over a period of time. 
+- [ ] Automation of client.py. It currently uses manual user input to determine which file to send. It would be better to automatically detect relevant files and send them. 
+- [ ] Development of a "master script" that runs all of the required steps on one of the nodes, detecting whether or not the server is running on another node. 
