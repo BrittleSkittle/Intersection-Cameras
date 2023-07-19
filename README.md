@@ -64,6 +64,11 @@ The goal of this project is to combine the 3D point clouds of 4 different realse
 
 # Desired Improvements
 - [x] Improvement of corners.py. It currently only records markers captured in single frame, while each fram detects different ids. It would be optimal to record all markers detected over a period of time. 
-- [ ] Automation of client.py. It currently uses manual user input to determine which file to send. It would be better to automatically detect relevant files and send them. (currently has issues)
-- [X] Development of a "master script" that runs all of the required steps on one of the nodes, detecting whether or not the server is running on another node. 
+- [X] Automation of client.py. It currently uses manual user input to determine which file to send. It would be better to automatically detect relevant files and send them. 
+    - [ ] fix new issues/inconsistencies
+- [X] Development of a "master script" that runs all of the required steps on one of the nodes
+    - [ ] make it detect whether or not the server is running on another node. 
 - [ ] Automate detection of node
+- [X] Add more markers for better calibration
+- [X] Update scripts to all be compatible with python 3.9
+- [ ] Train custom model with DIY cars (in progress)
