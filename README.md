@@ -13,18 +13,20 @@ The goal of this project is to combine the 3D point clouds of 4 different realse
 - Ultralytics (for Detection)
 
 # Calibration Instructions
-1. Run `python3 corners.py` on current node. Enter the amount of ids you want to detect, this can range from 9 to 40 depending on the setup. Try multiple `/dev/video` sources until it works. You may need to run as sudo. 
-2. Run `python3 2Dto3D.py` on the current node to generate the 3D points from the 2D points. 
-3. Run `python3 server.py` on the main node and `python3 client.py` on the other nodes, sending the appropriate pickle files "idsX.pkl" and/or "corners3DX.pkl"to the main node.
-4. Run `python3 combine.py` on the main node, which will return the transformation matrices, the rotation matrices, and the "roll" "pitch" "yaw" matrices for each node relative to the main node. 
-5. Run `python3 opencv_pointcloud_viewer` on each node and press 'd' until the resolution shown at the top of the window is as desired. Then press 'f' to download the pointcloud data and enter the current node. _This may need to be done twice to ensure data capture._
-6. Run `python3 server.py` again on the main node and `python3 client.py` on the other nodes and send "color_sourceX.pkl", "texcoordsX.pkl", and "vertsX.pkl" to the main node. 
-7. `Run static_pointcloud_viewer` on the main node. Press the number keys to toggle viewing of each respective node. Press 't' to toggle the transform from the selected nodes.  
+1. Run `python3 master-calibration.py` to run the scripts for steps 2 to 7 (besides running the server).
+2. Run `python3 corners.py` on current node. Enter the amount of ids you want to detect, this can range from 9 to 40 depending on the setup. Try multiple `/dev/video` sources until it works. You may need to run as sudo. 
+3. Run `python3 2Dto3D.py` on the current node to generate the 3D points from the 2D points. 
+4. Run `python3 server.py` on the main node and `python3 client.py` on the other nodes, sending the appropriate pickle files "idsX.pkl" and/or "corners3DX.pkl"to the main node.
+5. Run `python3 combine.py` on the main node, which will return the transformation matrices, the rotation matrices, and the "roll" "pitch" "yaw" matrices for each node relative to the main node. 
+6. Run `python3 opencv_pointcloud_viewer` on each node and press 'd' until the resolution shown at the top of the window is as desired. Then press 'f' to download the pointcloud data and enter the current node. _This may need to be done twice to ensure data capture._
+7. Run `python3 server.py` again on the main node and `python3 client.py` on the other nodes and send "color_sourceX.pkl", "texcoordsX.pkl", and "vertsX.pkl" to the main node. 
+8. `Run static_pointcloud_viewer` on the main node. Press the number keys to toggle viewing of each respective node. Press 't' to toggle the transform from the selected nodes.  
 
 # Detection Instructions
 1. Run `python3 yolov8.py` with python 3.9 or higher. Change the Yolo model as needed.
-    - sizes are 's m l x' in increasing order
+    - sizes are 'n s m l x' in increasing order
     - add -seg to use segmentation
+    - `car-test-model.py` is custom trained for DIY cars with 19 images
 
 # Legacy Instructions
 - The steps below send low quality depth data to a node. We are unsure how to access and manipulate this data.
