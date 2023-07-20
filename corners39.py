@@ -10,10 +10,8 @@ parameters = cv.aruco.DetectorParameters()
 dictionary = cv.aruco.getPredefinedDictionary(cv.aruco.DICT_6X6_250)
 detector = cv.aruco.ArucoDetector(dictionary,parameters)
 
-print('Type the number of the node you are currently on.\n')
-Node = input("")
-print('Type the number of markers you want to capture.\n')
-markerMin = int(input(""))
+Node = platform.node().split('-')[0][4]
+print("Currently on Node "+Node+".\n")
 prevIds = None
 prevCorners = None
 while input_video.grab():
@@ -49,6 +47,7 @@ while input_video.grab():
 
             print("new len: "+str(len(ids)))
             print("new corners len: "+str(len(corners)))
+            print("to save marker data press 's' or 'esc'")
             #print(ids)
 
         prevIds = ids
@@ -61,8 +60,6 @@ while input_video.grab():
     if key == ord("s"):
         break
     if key == 27:
-        break
-    if n>=markerMin:
         break
 
 pickle.dump(ids,open('ids'+Node+'.pkl', 'wb'))
