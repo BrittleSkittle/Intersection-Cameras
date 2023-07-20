@@ -2,7 +2,7 @@ import socket
 import os
 import tqdm
 import time
-
+import platform
 
 
 HOST = "10.33.1.1"  # Node1-1 IP
