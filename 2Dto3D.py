@@ -2,6 +2,7 @@ import pyrealsense2 as rs
 import numpy as np
 import pickle
 import cv2 as cv
+import platform
 
 Node = platform.node().split('-')[0][4]
 print("Currently on Node "+Node+".\n")
