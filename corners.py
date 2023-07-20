@@ -10,10 +10,8 @@ input_video.set(cv.CAP_PROP_FRAME_HEIGHT, 720)
 dictionary = cv.aruco.getPredefinedDictionary(cv.aruco.DICT_6X6_250)
 #detector = cv.aruco.ArucoDetector(dictionary)
 
-print('Type the number of the node you are currently on.\n')
-Node = input("")
-print('Type the number of markers you want to capture.\n')
-markerMin = int(input(""))
+Node = platform.node().split('-')[0][4]
+print("Currently on Node "+Node+".\n")
 prevIds = None
 prevCorners = None
 while input_video.grab():
@@ -48,7 +46,7 @@ while input_video.grab():
 
             print("new len: "+str(len(ids)))
             print("new corners len: "+str(len(corners)))
-            print("Press s to save detected markers.")
+            print("Press s or esc to save detected markers.")
             #print(ids)
 
         prevIds = ids
