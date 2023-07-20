@@ -3,8 +3,8 @@ import numpy as np
 import pickle
 import cv2 as cv
 
-print('Type the number of the node you are currently on.\n')
-Node = input("")
+Node = platform.node().split('-')[0][4]
+print("Currently on Node "+Node+".\n")
 
 try:
     ids = pickle.load(open('./ids'+Node+'.pkl', 'rb'))
