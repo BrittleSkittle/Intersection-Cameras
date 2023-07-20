@@ -2,6 +2,7 @@
 import cv2 as cv
 import pickle
 import numpy as np
+import platform
 #Try different /video numbers in /dev folder
 input_video = cv.VideoCapture('/dev/video2')
 input_video.set(cv.CAP_PROP_FRAME_WIDTH, 1280)
