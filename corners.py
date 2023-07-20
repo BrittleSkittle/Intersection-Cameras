@@ -60,8 +60,6 @@ while input_video.grab():
         break
     if key == 27:
         break
-    if n>=markerMin:
-        break
 
 pickle.dump(ids,open('ids'+Node+'.pkl', 'wb'))
 pickle.dump(corners, open('corners'+Node+'.pkl','wb'))
