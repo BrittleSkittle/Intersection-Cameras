@@ -28,11 +28,11 @@ def sendFile(filename):
     progress.close()
 
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-    Node = input("Start server on main node. Then enter the current node number. ")
-    s.connect((HOST, PORT))
+    Node = platform.node().split('-')[0][4]
+    print("Currently on Node "+Node+".\n")    s.connect((HOST, PORT))
     filename = "NA"
     if Node == "1":
-        print("Host Node entered, not sending files.")
+        print("Currently on Node 1, not sending files.")
         filename = "q"
     while filename != "q":
 
