@@ -29,7 +29,8 @@ def sendFile(filename):
 
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     Node = platform.node().split('-')[0][4]
-    print("Currently on Node "+Node+".\n")    s.connect((HOST, PORT))
+    print("Currently on Node "+Node+".\n")    
+    s.connect((HOST, PORT))
     filename = "NA"
     if Node == "1":
         print("Currently on Node 1, not sending files.")
