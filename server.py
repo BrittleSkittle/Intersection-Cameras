@@ -19,15 +19,20 @@ print("Server is currently running...\n Now run client.py on a different node an
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     try: 
         s.bind((HOST, PORT))
+        s.listen()
+        conn, addr = s.accept()
         while True:
-            s.listen()
-            conn, addr = s.accept()
-            received = conn.recv(BUFFER_SIZE).decode()
+            try:
+                received = conn.recv(BUFFER_SIZE).decode()
+            except ValueError as e:
+                conn.close()
+                break
             filename, filesize = received.split(SEPARATOR)
             filename = os.path.basename(filename)
             filesize = int(filesize)
             progress = tqdm.tqdm(range(filesize), f"Receiving {filename}", unit="B", unit_scale=True, unit_divisor=1024)
             with open(filename, "wb") as f:
+                totalbytes = 0
                 while True:
                     # read 1024 bytes from the socket (receive)
                     bytes_read = conn.recv(BUFFER_SIZE)
@@ -39,8 +44,11 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                     f.write(bytes_read)
                     # update the progress bar
                     progress.update(len(bytes_read))
+                    totalbytes = len(bytes_read) + totalbytes 
+                    if(totalbytes >= filesize): 
+                        break
             progress.close()
-            conn.close() 
+            #conn.close() 
             print(filename+" received. Run client.py on the same or a different node to continue. 'Ctrl-C' to quit\n")
     except KeyboardInterrupt:
         print('\n Stopping server.')
