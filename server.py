@@ -15,7 +15,7 @@ HOST = "10.33.1.1"  # Node1-1 IP
 PORT = 65432  # Port to listen on (non-privileged ports are > 1023)
 Node = platform.node().split('-')[0][4]
 print("Currently on Node "+Node+".\n")
-if Node == 1:
+if Node == str(1):
     print("Server is currently running...\n Now run client.py on a different node and type the file to transfer.\n Press 'Ctrl-c' to stop.\n")
     
 
@@ -30,26 +30,36 @@ if Node == 1:
                 except ValueError as e:
                     conn.close()
                     break
-                filename, filesize = received.split(SEPARATOR)
+                try:
+                    filename, filesize = received.split(SEPARATOR)
+                except Exception as e:
+                    continue
                 filename = os.path.basename(filename)
                 filesize = int(filesize)
                 progress = tqdm.tqdm(range(filesize), f"Receiving {filename}", unit="B", unit_scale=True, unit_divisor=1024)
-                with open(filename, "wb") as f:
-                    totalbytes = 0
-                    while True:
-                        # read 1024 bytes from the socket (receive)
-                        bytes_read = conn.recv(BUFFER_SIZE)
-                        if not bytes_read:    
-                            # nothing is received
-                            # file transmitting is done
-                            break
-                        # write to the file the bytes we just received
-                        f.write(bytes_read)
-                        # update the progress bar
-                        progress.update(len(bytes_read))
-                        totalbytes = len(bytes_read) + totalbytes 
-                        if(totalbytes >= filesize): 
-                            break
+                try:
+                    with open(filename, "wb") as f:
+                        totalbytes = 0
+                        while True:
+                            # read 1024 bytes from the socket (receive)
+                            bytes_read = conn.recv(BUFFER_SIZE)
+                            if not bytes_read:    
+                                # nothing is received
+                                # file transmitting is done
+                                break
+                            # write to the file the bytes we just received
+                            f.write(bytes_read)
+                            # update the progress bar
+                            progress.update(len(bytes_read))
+                            totalbytes = len(bytes_read) + totalbytes 
+                            if(totalbytes >= filesize): 
+                                break
+                except IOError as e:
+                    print(e)
+                    continue
+                except Exception as e:
+                    print("\n Exception: "+e)
+                    continue
                 progress.close()
                 #conn.close() 
                 print(filename+" received. Run client.py on the same or a different node to continue. 'Ctrl-C' to quit\n")
