@@ -330,8 +330,14 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
 
         if key == ord("s") or streaming==True:
             if streaming == False:
-                streaming = True
-                s.connect((HOST, PORT))
+                try:
+                    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
+                    s.connect((HOST, PORT))
+                    streaming = True
+
+                except:
+                    print("\n Server not running")
+                    continue
                 print("Start point cloud video on main node.")
                 Node = platform.node().split('-')[1][0]
                 print("Currently on Node "+Node+".\n")
@@ -342,21 +348,25 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 pickle.dump(verts, open('verts'+Node+'.pkl','wb'))
                 pickle.dump(texcoords, open('texcoords'+Node+'.pkl','wb'))
                 pickle.dump(color_source, open('color_source'+Node+'.pkl','wb'))
-                time.sleep(1)
+                time.sleep(.2)
                 try:
                     sendFrame("color_source"+str(Node)+".pkl")
-                    time.sleep(.5)               
-
+                    time.sleep(.2)               
+                except BrokenPipeError as p:
+                    print("Pipeline broken")
+                    streaming = False
+                    s.close()
+                
                 except Exception as e:
                     print("color_source not sent due to Exception: "+str(e)+".\n")
                 try:
                     sendFrame("verts"+str(Node)+".pkl")
-                    time.sleep(.5)
+                    time.sleep(.2)
                 except Exception as e:
                     print("verts not sent due to Exception: "+str(e)+".\n")
                 try:
                     sendFrame("texcoords"+str(Node)+".pkl")
-                    time.sleep(.5)
+                    time.sleep(.2)
                 except Exception as e:
                     print("texcoords not sent due to Exception: "+str(e)+".\n")
                     
