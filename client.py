@@ -6,6 +6,8 @@ import platform
 
 
 HOST = "10.33.1.1"  # Node1-1 IP
+#HOST = "10.33.3.1"  # Srv1 IP
+
 PORT = 65432  # The port used by the server
 SEPARATOR = "<SEPARATOR>"
 BUFFER_SIZE = 4096
@@ -28,7 +30,7 @@ def sendFile(filename):
     progress.close()
 
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-    Node = platform.node().split('-')[0][4]
+    Node = platform.node().split('-')[1][0]
     print("Currently on Node "+Node+".\n")    
     s.connect((HOST, PORT))
     filename = "NA"
