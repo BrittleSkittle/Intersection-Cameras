@@ -31,6 +31,10 @@ import time
 import cv2
 import numpy as np
 import pyrealsense2 as rs
+import os
+import tqdm
+import socket
+import platform
 
 class AppState:
 
@@ -210,100 +214,163 @@ def pointcloud(out, verts, texcoords, color, painter=True):
 
 out = np.empty((h, w, 3), dtype=np.uint8)
 
-while True:
-    # Grab camera data
-    if not state.paused:
-        # Wait for a coherent pair of frames: depth and color
-        frames = pipeline.wait_for_frames()
 
-        depth_frame = frames.get_depth_frame()
-        color_frame = frames.get_color_frame()
 
-        depth_frame = decimate.process(depth_frame)
+HOST = "10.33.1.1"  # Node1-1 IP
+PORT = 65432  # The port used by the server
+SEPARATOR = "<SEPARATOR>"
+BUFFER_SIZE = 4096
+streaming = False
+Node = platform.node().split('-')[1][0]
+print("Currently on Node "+Node+".\n") 
+def sendFrame(filename):
+    filesize = os.path.getsize(filename)
+    s.send(f"{filename}{SEPARATOR}{filesize}".encode())
+    progress = tqdm.tqdm(range(filesize), f"Sending {filename}", unit="B", unit_scale=True, unit_divisor=1024)
+    with open(filename, "rb") as f:
+        while True:
+            # read the bytes from the file
+            bytes_read = f.read(BUFFER_SIZE)
+            if not bytes_read:
+                # file transmitting is done
+                break
+            # we use sendall to assure transimission in busy networks
+            s.sendall(bytes_read)
+            # update the progress bar
+            progress.update(len(bytes_read))
+    progress.close()
+with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
 
-        # Grab new intrinsics (may be changed by decimation)
-        depth_intrinsics = rs.video_stream_profile(
-            depth_frame.profile).get_intrinsics()
-        w, h = depth_intrinsics.width, depth_intrinsics.height
+    while True:
+        # Grab camera data
+        if not state.paused:
+            # Wait for a coherent pair of frames: depth and color
+            frames = pipeline.wait_for_frames()
 
-        depth_image = np.asanyarray(depth_frame.get_data())
-        color_image = np.asanyarray(color_frame.get_data())
+            depth_frame = frames.get_depth_frame()
+            color_frame = frames.get_color_frame()
 
-        depth_colormap = np.asanyarray(
-            colorizer.colorize(depth_frame).get_data())
+            depth_frame = decimate.process(depth_frame)
 
-        if state.color:
-            mapped_frame, color_source = color_frame, color_image
+            # Grab new intrinsics (may be changed by decimation)
+            depth_intrinsics = rs.video_stream_profile(
+                depth_frame.profile).get_intrinsics()
+            w, h = depth_intrinsics.width, depth_intrinsics.height
+
+            depth_image = np.asanyarray(depth_frame.get_data())
+            color_image = np.asanyarray(color_frame.get_data())
+
+            depth_colormap = np.asanyarray(
+                colorizer.colorize(depth_frame).get_data())
+
+            if state.color:
+                mapped_frame, color_source = color_frame, color_image
+            else:
+                mapped_frame, color_source = depth_frame, depth_colormap
+
+            points = pc.calculate(depth_frame)
+            pc.map_to(mapped_frame)
+
+            # Pointcloud data to arrays
+            v, t = points.get_vertices(), points.get_texture_coordinates()
+            verts = np.asanyarray(v).view(np.float32).reshape(-1, 3)  # xyz
+            texcoords = np.asanyarray(t).view(np.float32).reshape(-1, 2)  # uv
+            pickle.dump(verts, open('verts'+Node+'.pkl','wb'))
+            pickle.dump(texcoords, open('texcoords'+Node+'.pkl','wb'))
+            pickle.dump(color_source, open('color_source'+Node+'.pkl','wb'))
+
+        # Render
+        now = time.time()
+
+        out.fill(0)
+
+        
+
+        if not state.scale or out.shape[:2] == (h, w):
+            pointcloud(out, verts, texcoords, color_source)
         else:
-            mapped_frame, color_source = depth_frame, depth_colormap
+            tmp = np.zeros((h, w, 3), dtype=np.uint8)
+            pointcloud(tmp, verts, texcoords, color_source)
+            tmp = cv2.resize(
+                tmp, out.shape[:2][::-1], interpolation=cv2.INTER_NEAREST)
+            np.putmask(out, tmp > 0, tmp)
 
-        points = pc.calculate(depth_frame)
-        pc.map_to(mapped_frame)
+        
+        dt = time.time() - now
 
-        # Pointcloud data to arrays
-        v, t = points.get_vertices(), points.get_texture_coordinates()
-        verts = np.asanyarray(v).view(np.float32).reshape(-1, 3)  # xyz
-        texcoords = np.asanyarray(t).view(np.float32).reshape(-1, 2)  # uv
+        cv2.setWindowTitle(
+            state.WIN_NAME, "RealSense (%dx%d) %dFPS (%.2fms) %s" %
+            (w, h, 1.0/dt, dt*1000, "PAUSED" if state.paused else ""))
 
-    # Render
-    now = time.time()
+        cv2.imshow(state.WIN_NAME, out)
+        key = cv2.waitKey(1)
 
-    out.fill(0)
+        if key == ord("r"):
+            state.reset()
 
-    
+        if key == ord("p"):
+            state.paused ^= True
 
-    if not state.scale or out.shape[:2] == (h, w):
-        pointcloud(out, verts, texcoords, color_source)
-    else:
-        tmp = np.zeros((h, w, 3), dtype=np.uint8)
-        pointcloud(tmp, verts, texcoords, color_source)
-        tmp = cv2.resize(
-            tmp, out.shape[:2][::-1], interpolation=cv2.INTER_NEAREST)
-        np.putmask(out, tmp > 0, tmp)
+        if key == ord("d"):
+            state.decimate = (state.decimate + 1) % 3
+            decimate.set_option(rs.option.filter_magnitude, 2 ** state.decimate)
 
-    
-    dt = time.time() - now
+        if key == ord("z"):
+            state.scale ^= True
 
-    cv2.setWindowTitle(
-        state.WIN_NAME, "RealSense (%dx%d) %dFPS (%.2fms) %s" %
-        (w, h, 1.0/dt, dt*1000, "PAUSED" if state.paused else ""))
+        if key == ord("c"):
+            state.color ^= True
 
-    cv2.imshow(state.WIN_NAME, out)
-    key = cv2.waitKey(1)
+        # if key == ord("f"):
+        #     #out, verts, texcoords, color_source
+        #     pickle.dump(verts, open('verts'+Node+'.pkl','wb'))
+        #     pickle.dump(texcoords, open('texcoords'+Node+'.pkl','wb'))
+        #     pickle.dump(color_source, open('color_source'+Node+'.pkl','wb'))
+        #     break
 
-    if key == ord("r"):
-        state.reset()
+        if key == ord("s") or streaming==True:
+            if streaming == False:
+                streaming = True
+                s.connect((HOST, PORT))
+                print("Start point cloud video on main node.")
+                Node = platform.node().split('-')[1][0]
+                print("Currently on Node "+Node+".\n")
+            
+            if Node == str(1):
+                print("Host Node entered, not sending files.")
+            else:
+                pickle.dump(verts, open('verts'+Node+'.pkl','wb'))
+                pickle.dump(texcoords, open('texcoords'+Node+'.pkl','wb'))
+                pickle.dump(color_source, open('color_source'+Node+'.pkl','wb'))
+                time.sleep(1)
+                try:
+                    sendFrame("color_source"+str(Node)+".pkl")
+                    time.sleep(.5)               
 
-    if key == ord("p"):
-        state.paused ^= True
+                except Exception as e:
+                    print("color_source not sent due to Exception: "+str(e)+".\n")
+                try:
+                    sendFrame("verts"+str(Node)+".pkl")
+                    time.sleep(.5)
+                except Exception as e:
+                    print("verts not sent due to Exception: "+str(e)+".\n")
+                try:
+                    sendFrame("texcoords"+str(Node)+".pkl")
+                    time.sleep(.5)
+                except Exception as e:
+                    print("texcoords not sent due to Exception: "+str(e)+".\n")
+                    
 
-    if key == ord("d"):
-        state.decimate = (state.decimate + 1) % 3
-        decimate.set_option(rs.option.filter_magnitude, 2 ** state.decimate)
+            
 
-    if key == ord("z"):
-        state.scale ^= True
 
-    if key == ord("c"):
-        state.color ^= True
+        if key == ord("e"):
+            points.export_to_ply('./out.ply', mapped_frame)
 
-    if key == ord("f"):
-        Node = input("Type current node number.\n")
-        time.sleep(0.01)
-        #out, verts, texcoords, color_source
-        pickle.dump(verts, open('verts'+Node+'.pkl','wb'))
-        pickle.dump(texcoords, open('texcoords'+Node+'.pkl','wb'))
-        pickle.dump(color_source, open('color_source'+Node+'.pkl','wb'))
-        break
-
-    if key == ord("s"):
-        cv2.imwrite('./out.png', out)
-
-    if key == ord("e"):
-        points.export_to_ply('./out.ply', mapped_frame)
-
-    if key in (27, ord("q")) or cv2.getWindowProperty(state.WIN_NAME, cv2.WND_PROP_AUTOSIZE) < 0:
-        break
+        if key in (27, ord("q")) or cv2.getWindowProperty(state.WIN_NAME, cv2.WND_PROP_AUTOSIZE) < 0:
+            break
 
 # Stop streaming
 pipeline.stop()
+s.close()
+
