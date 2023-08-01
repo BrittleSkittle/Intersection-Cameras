@@ -20,6 +20,11 @@ masks = detect.masks
 mask1 = 0 #masks[0]
 mask = 0 #mask1.data[0].numpy()
 detectplot = detect.plot()
+box = detect.boxes[0]
+
+for box in detect.boxes:
+    class_id = detect.names[box.cls[0].item()]
+    print("output", class_id)
 
 while True:
     for x in range(len(masks)):
@@ -30,5 +35,6 @@ while True:
     if y == ord("q"):
         break
     
+
 input_video.release()
 cv.destroyAllWindows()
