@@ -10,6 +10,11 @@ The goal of this project is to combine the 3D point clouds of 4 different realse
     - numpy
     - pickle
     - tqdm
+    - matplotlib
+    - math
+    - pyrealsense2
+    - cv2
+    - platform
 - Ultralytics (for Detection)
 
 # Calibration Instructions
