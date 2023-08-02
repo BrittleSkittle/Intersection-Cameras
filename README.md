@@ -87,3 +87,10 @@ The goal of this project is to combine the 3D point clouds of 4 different realse
 - [X] Add more markers for better calibration
 - [X] Update scripts to all be compatible with python 3.9
 - [ ] Train custom model with DIY cars (in progress)
+- [ ] Fix continuous pointcloud streaming
+    - [ ] Add file locks
+    - [ ] Stream directly instead of uploading/downloading files
+    - [ ] Implement queue/buffer
+- [ ] Make server restart on failure
+    - Currently stops without error message on server side. Client says "pipeline broken"
+- [ ] Get mask points in 3D
