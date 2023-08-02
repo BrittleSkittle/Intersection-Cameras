@@ -221,6 +221,7 @@ PORT = 65432  # The port used by the server
 SEPARATOR = "<SEPARATOR>"
 BUFFER_SIZE = 4096
 streaming = False
+downloadfile = False
 Node = platform.node().split('-')[1][0]
 print("Currently on Node "+Node+".\n") 
 def sendFrame(filename):
@@ -373,7 +374,16 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
 
             
 
-
+        if key == ord("f") or downloadfile ==True:
+            downloadfile = True
+            Node = platform.node().split('-')[0][4]
+            print("Currently on Node "+Node+".\n") 
+            time.sleep(0.1)
+            #out, verts, texcoords, color_source
+            pickle.dump(verts, open('verts'+Node+'.pkl','wb'))
+            pickle.dump(texcoords, open('texcoords'+Node+'.pkl','wb'))
+            pickle.dump(color_source, open('color_source'+Node+'.pkl','wb'))
+            #break
         if key == ord("e"):
             points.export_to_ply('./out.ply', mapped_frame)
 
