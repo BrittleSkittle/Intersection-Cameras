@@ -20,13 +20,28 @@ The goal of this project is to combine the 3D point clouds of 4 different realse
 5. Run `python3 combine.py` on the main node, which will return the transformation matrices, the rotation matrices, and the "roll" "pitch" "yaw" matrices for each node relative to the main node. 
 6. Run `python3 opencv_pointcloud_viewer` on each node and press 'd' until the resolution shown at the top of the window is as desired. Then press 'f' to download the pointcloud data and enter the current node. _This may need to be done twice to ensure data capture._
 7. Run `python3 server.py` again on the main node and `python3 client.py` on the other nodes and send "color_sourceX.pkl", "texcoordsX.pkl", and "vertsX.pkl" to the main node. 
+
+**OR**
+
+**...**
+
+6. Run `python3 opencv_pointcloud_viewer` on the main node and press f to continuously download frames. 
+7. Run `python3 opencv_pointcloud_viewer` on the other nodes to continuously stream frames. The server must be running on the main node to stream frames, but the client is not needed. 
+
+**...**
+
 8. `Run static_pointcloud_viewer` on the main node. Press the number keys to toggle viewing of each respective node. Press 't' to toggle the transform from the selected nodes.  
+
+
+
 
 # Detection Instructions
 1. Run `python3 yolov8.py` with python 3.9 or higher. Change the Yolo model as needed.
     - sizes are 'n s m l x' in increasing order
     - add -seg to use segmentation
     - `car-test-model.py` is custom trained for DIY cars with 19 images
+
+2. To segment and separate masks run `python3 yolov8_segmentmasks.py` and press 's' once the desired objects are detected. Press q to close.
 
 # Legacy Instructions
 - The steps below send low quality depth data to a node. We are unsure how to access and manipulate this data.
