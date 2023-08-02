@@ -1,13 +1,4 @@
-# License: Apache 2.0. See LICENSE file in root directory.
-# Copyright(c) 2015-2017 Intel Corporation. All Rights Reserved.
-
 """
-OpenCV and Numpy Point cloud Software Renderer
-
-This sample is mostly for demonstration and educational purposes.
-It really doesn't offer the quality or performance that can be
-achieved with hardware acceleration.
-
 Usage:
 ------
 Mouse: 
@@ -20,7 +11,8 @@ Keyboard:
     [d]     Cycle through decimation values
     [z]     Toggle point scaling
     [c]     Toggle color source
-    [s]     Save PNG (./out.png)
+    [s]     Stream data to server node
+    [f]     Continuously download files to current node
     [e]     Export points to ply (./out.ply)
     [q\ESC] Quit
 """
@@ -321,13 +313,6 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
 
         if key == ord("c"):
             state.color ^= True
-
-        # if key == ord("f"):
-        #     #out, verts, texcoords, color_source
-        #     pickle.dump(verts, open('verts'+Node+'.pkl','wb'))
-        #     pickle.dump(texcoords, open('texcoords'+Node+'.pkl','wb'))
-        #     pickle.dump(color_source, open('color_source'+Node+'.pkl','wb'))
-        #     break
 
         if key == ord("s") or streaming==True:
             if streaming == False:
